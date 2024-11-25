@@ -9,6 +9,8 @@ public class ReqRes {
 
     private Long statusCode;
 
+    private String token;
+
     private String message;
 
     private Object data;
