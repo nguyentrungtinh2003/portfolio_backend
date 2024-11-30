@@ -1,6 +1,7 @@
 package com.TrungTinhBackend.portfolio_backend.Entity;
 
 import com.TrungTinhBackend.portfolio_backend.Enum.LevelSkill;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class Skill {
     private LevelSkill level;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 

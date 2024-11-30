@@ -1,0 +1,35 @@
+package com.TrungTinhBackend.portfolio_backend.Controller;
+
+import com.TrungTinhBackend.portfolio_backend.Entity.Skill;
+import com.TrungTinhBackend.portfolio_backend.ReqRes.ReqRes;
+import com.TrungTinhBackend.portfolio_backend.Service.Skill.SkillService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+
+@RestController
+@RequestMapping("/skill")
+public class SkillController {
+
+    @Autowired
+    private SkillService skillService;
+
+    @PostMapping("/add")
+    public ResponseEntity<ReqRes> addSkill(@RequestPart Skill skill,
+                                           @RequestPart MultipartFile img) throws IOException {
+        return ResponseEntity.ok(skillService.addSkill(skill,img));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ReqRes> getAllSkill() {
+        return ResponseEntity.ok(skillService.getAllSkill());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReqRes> getSkillById(@PathVariable Long id) {
+        return ResponseEntity.ok(skillService.getSkillById(id));
+    }
+}

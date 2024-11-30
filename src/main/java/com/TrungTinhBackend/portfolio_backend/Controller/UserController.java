@@ -28,4 +28,15 @@ public class UserController {
                                            @RequestPart MultipartFile img) throws IOException {
         return ResponseEntity.ok(userService.register(user,img));
     }
+
+    @GetMapping("/byName/{username}")
+    public ResponseEntity<ReqRes> getUserByUserName(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getUserByUsername(username));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReqRes> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
 }

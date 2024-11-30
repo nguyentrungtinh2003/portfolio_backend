@@ -16,7 +16,7 @@ import java.util.function.Function;
 public class JwtUtils {
 
     private SecretKey Key;
-    private static final long EXPIRATION_TIME = 86400000 ; //24 hours
+    private static final long EXPIRATION_TIME = 3600000 ; //24 hours
 
     public JwtUtils() {
         String secretString = "563858594676085648355464835539438557565846474655";

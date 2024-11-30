@@ -1,6 +1,7 @@
 package com.TrungTinhBackend.portfolio_backend.Entity;
 
 import com.TrungTinhBackend.portfolio_backend.Enum.StatusProject;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,6 +37,7 @@ public class Project {
     private String img;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 

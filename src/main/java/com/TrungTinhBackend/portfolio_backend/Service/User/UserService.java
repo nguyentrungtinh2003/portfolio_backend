@@ -8,6 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 public interface UserService {
-    ReqRes login(User user, HttpServletResponse response);
+    public ReqRes login(User user, HttpServletResponse response);
     public ReqRes register(User user, MultipartFile img) throws IOException;
+
+    public ReqRes getUserByUsername(String username);
+
+    public ReqRes getUserById(Long id);
 }

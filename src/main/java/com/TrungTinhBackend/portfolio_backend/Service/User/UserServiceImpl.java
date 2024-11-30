@@ -110,4 +110,29 @@ public class UserServiceImpl implements UserService{
         return reqRes;
 
     }
+
+    @Override
+    public ReqRes getUserByUsername(String username) {
+        ReqRes reqRes = new ReqRes();
+        User user = userRepository.findByUsername(username);
+
+        reqRes.setStatusCode(200L);
+        reqRes.setMessage("Get user info success !");
+        reqRes.setData(user);
+        reqRes.setTimestamp(LocalDateTime.now());
+        return reqRes;
+    }
+
+    @Override
+    public ReqRes getUserById(Long id) {
+
+        User user = userRepository.findById(id).orElse(null);
+
+        ReqRes reqRes = new ReqRes();
+        reqRes.setStatusCode(200L);
+        reqRes.setMessage("Get user by id success !");
+        reqRes.setData(user);
+        reqRes.setTimestamp(LocalDateTime.now());
+        return reqRes;
+    }
 }
