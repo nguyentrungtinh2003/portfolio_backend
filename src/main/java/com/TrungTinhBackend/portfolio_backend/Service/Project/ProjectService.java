@@ -10,4 +10,10 @@ public interface ProjectService {
     public ReqRes addProject(Project project, MultipartFile img) throws IOException;
 
     public ReqRes getAllProject();
+
+    public ReqRes getProjectById(Long id);
+
+    public ReqRes updateProject(Long id, Project project, MultipartFile img) throws IOException;
+
+    public ReqRes deleteProject(Long id);
 }

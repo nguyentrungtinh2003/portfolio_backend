@@ -86,4 +86,67 @@ public class ProjectServiceImpl implements ProjectService{
         reqRes.setTimestamp(LocalDateTime.now());
         return reqRes;
     }
+
+    @Override
+    public ReqRes getProjectById(Long id) {
+
+        Project project = projectRepository.findById(id).orElse(null);
+        ReqRes reqRes = new ReqRes();
+        reqRes.setStatusCode(200L);
+        reqRes.setMessage("Get project by id success !");
+        reqRes.setData(project);
+        reqRes.setTimestamp(LocalDateTime.now());
+        return reqRes;
+    }
+
+    @Override
+    public ReqRes updateProject(Long id, Project project, MultipartFile img) throws IOException {
+
+        ReqRes project1 = getProjectById(id);
+        Project project2 = (Project) project1.getData();
+
+        ReqRes user = userService.getUserById(project.getUser().getId());
+        User user1 = (User) user.getData();
+
+        ReqRes skillList = skillService.getAllSkill();
+        List<Skill> skills = (List<Skill>)skillList.getData();
+
+        if (img != null && !img.isEmpty()) {
+            Map uploadResult = cloudinary.uploader().upload(img.getBytes(), ObjectUtils.emptyMap());
+            String imgUrl = uploadResult.get("url").toString();
+            project2.setImg(imgUrl); // Lưu URL của ảnh
+        }
+        project2.setName(project.getName());
+        project2.setDescription(project.getDescription());
+        project2.setEndDate(project.getEndDate());
+        project2.setStartDate(project.getStartDate());
+        project2.setStatus(project.getStatus());
+        project2.setTechnology(project.getTechnology());
+        project2.setGithubLink(project.getGithubLink());
+        project2.setUser(user1);
+        project2.setSkills(skills);
+
+        projectRepository.save(project2);
+
+        ReqRes reqRes = new ReqRes();
+        reqRes.setStatusCode(200L);
+        reqRes.setMessage("Update project success !");
+        reqRes.setData(project2);
+        reqRes.setTimestamp(LocalDateTime.now());
+        return reqRes;
+    }
+
+    @Override
+    public ReqRes deleteProject(Long id) {
+        ReqRes project1 = getProjectById(id);
+        Project project2 = (Project) project1.getData();
+
+        projectRepository.delete(project2);
+        ReqRes reqRes = new ReqRes();
+        reqRes.setStatusCode(200L);
+        reqRes.setMessage("Delete project success !");
+        reqRes.setData(project2);
+        reqRes.setTimestamp(LocalDateTime.now());
+        return reqRes;
+    }
 }

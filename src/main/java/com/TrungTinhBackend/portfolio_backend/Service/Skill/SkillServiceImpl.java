@@ -83,4 +83,45 @@ public class SkillServiceImpl implements SkillService{
         reqRes.setTimestamp(LocalDateTime.now());
         return reqRes;
     }
+
+    @Override
+    public ReqRes updateSkill(Long id, Skill skill, MultipartFile img) throws IOException {
+
+        ReqRes user = userService.getUserById(skill.getUser().getId());
+        User user1 = (User) user.getData();
+        ReqRes skill1 = getSkillById(id);
+        Skill skill2 = (Skill) skill1.getData();
+        skill2.setName(skill.getName());
+        skill2.setLevel(skill.getLevel());
+        skill2.setUser(user1);
+
+        if (img != null && !img.isEmpty()) {
+            Map uploadResult = cloudinary.uploader().upload(img.getBytes(), ObjectUtils.emptyMap());
+            String imgUrl = uploadResult.get("url").toString();
+            skill2.setImg(imgUrl); // Lưu URL của ảnh
+        }
+
+        skillRepository.save(skill2);
+
+        ReqRes reqRes = new ReqRes();
+        reqRes.setStatusCode(200L);
+        reqRes.setMessage("Update skill success !");
+        reqRes.setData(skill2);
+        reqRes.setTimestamp(LocalDateTime.now());
+        return reqRes;
+    }
+
+    @Override
+    public ReqRes deleteSkill(Long id) {
+        ReqRes skill = getSkillById(id);
+        Skill skill1 = (Skill) skill.getData();
+
+        skillRepository.delete(skill1);
+        ReqRes reqRes = new ReqRes();
+        reqRes.setStatusCode(200L);
+        reqRes.setMessage("Delete skill success !");
+        reqRes.setData(skill1);
+        reqRes.setTimestamp(LocalDateTime.now());
+        return reqRes;
+    }
 }

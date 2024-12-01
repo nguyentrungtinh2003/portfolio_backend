@@ -135,4 +135,52 @@ public class UserServiceImpl implements UserService{
         reqRes.setTimestamp(LocalDateTime.now());
         return reqRes;
     }
+
+    @Override
+    public ReqRes updateUser(Long id,User user, MultipartFile img) throws IOException {
+
+        ReqRes user1 = getUserById(id);
+
+        User user2 = (User) user1.getData();
+        user2.setUsername(user.getUsername());
+        user2.setPassword(passwordEncoder.encode(user.getPassword()));
+        user2.setEmail(user.getEmail());
+        user2.setPhoneNumber(user.getPhoneNumber());
+        user2.setAddress(user.getAddress());
+        user2.setFullName(user.getFullName());
+        user2.setPosition(user.getPosition());
+        user2.setUniversity(user.getUniversity());
+        user2.setBirthDay(user.getBirthDay());
+        user2.setHobby(user.getHobby());
+
+        if (img != null && !img.isEmpty()) {
+            Map uploadResult = cloudinary.uploader().upload(img.getBytes(), ObjectUtils.emptyMap());
+            String imgUrl = uploadResult.get("url").toString();
+            user2.setImg(imgUrl); // Lưu URL của ảnh
+        }
+
+        userRepository.save(user2);
+
+        ReqRes reqRes = new ReqRes();
+        reqRes.setStatusCode(200L);
+        reqRes.setMessage("Update user by id success !");
+        reqRes.setData(user2);
+        reqRes.setTimestamp(LocalDateTime.now());
+        return reqRes;
+    }
+
+    @Override
+    public ReqRes deleteUser(Long id) {
+
+        ReqRes user1 = getUserById(id);
+
+        User user2 = (User) user1.getData();
+        userRepository.delete(user2);
+        ReqRes reqRes = new ReqRes();
+        reqRes.setStatusCode(200L);
+        reqRes.setMessage("Delete user by id success !");
+        reqRes.setData(user2);
+        reqRes.setTimestamp(LocalDateTime.now());
+        return reqRes;
+    }
 }

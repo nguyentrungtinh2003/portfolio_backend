@@ -29,6 +29,17 @@ public class UserController {
         return ResponseEntity.ok(userService.register(user,img));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ReqRes> updateUser(@PathVariable Long id,@RequestPart User user,
+                                             @RequestPart MultipartFile img) throws IOException {
+        return ResponseEntity.ok(userService.updateUser(id,user,img));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ReqRes> deleteUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.deleteUser(id));
+    }
+
     @GetMapping("/byName/{username}")
     public ResponseEntity<ReqRes> getUserByUserName(@PathVariable String username) {
         return ResponseEntity.ok(userService.getUserByUsername(username));

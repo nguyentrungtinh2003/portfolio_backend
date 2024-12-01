@@ -23,8 +23,24 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.addProject(project,img));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ReqRes> updateProject(@PathVariable Long id,@RequestPart Project project,
+                                             @RequestPart MultipartFile img) throws IOException {
+        return ResponseEntity.ok(projectService.updateProject(id,project,img));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ReqRes> deleteProject(@PathVariable Long id) {
+        return ResponseEntity.ok(projectService.deleteProject(id));
+    }
+
     @GetMapping("/all")
     public ResponseEntity<ReqRes> getAllProject() {
         return ResponseEntity.ok(projectService.getAllProject());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReqRes> getProjectById(@PathVariable Long id) {
+        return ResponseEntity.ok(projectService.getProjectById(id));
     }
 }

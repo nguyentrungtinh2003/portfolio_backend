@@ -12,4 +12,8 @@ public interface SkillService {
     public ReqRes getAllSkill();
 
     public ReqRes getSkillById(Long id);
+
+    public ReqRes updateSkill(Long id, Skill skill, MultipartFile img) throws IOException;
+
+    public ReqRes deleteSkill(Long id);
 }

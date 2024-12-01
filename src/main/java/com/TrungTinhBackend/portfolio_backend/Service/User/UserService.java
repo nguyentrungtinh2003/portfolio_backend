@@ -14,4 +14,8 @@ public interface UserService {
     public ReqRes getUserByUsername(String username);
 
     public ReqRes getUserById(Long id);
+
+    public ReqRes updateUser(Long id,User user, MultipartFile img) throws IOException;
+
+    public ReqRes deleteUser(Long id);
 }

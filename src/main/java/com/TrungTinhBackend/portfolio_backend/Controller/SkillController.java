@@ -23,6 +23,17 @@ public class SkillController {
         return ResponseEntity.ok(skillService.addSkill(skill,img));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ReqRes> updateSkill(@PathVariable Long id,@RequestPart Skill skill,
+                                           @RequestPart MultipartFile img) throws IOException {
+        return ResponseEntity.ok(skillService.updateSkill(id,skill,img));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ReqRes> deleteSkill(@PathVariable Long id) {
+        return ResponseEntity.ok(skillService.deleteSkill(id));
+    }
+
     @GetMapping("/all")
     public ResponseEntity<ReqRes> getAllSkill() {
         return ResponseEntity.ok(skillService.getAllSkill());
