@@ -30,8 +30,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReqRes> updateUser(@PathVariable Long id,@RequestPart User user,
-                                             @RequestPart MultipartFile img) throws IOException {
+    public ResponseEntity<ReqRes> updateUser(@PathVariable Long id,@RequestPart(required = false) User user,
+                                             @RequestPart(required = false) MultipartFile img) throws IOException {
         return ResponseEntity.ok(userService.updateUser(id,user,img));
     }
 

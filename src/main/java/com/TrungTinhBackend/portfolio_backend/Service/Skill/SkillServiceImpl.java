@@ -87,7 +87,13 @@ public class SkillServiceImpl implements SkillService{
     @Override
     public ReqRes updateSkill(Long id, Skill skill, MultipartFile img) throws IOException {
 
-        ReqRes user = userService.getUserById(skill.getUser().getId());
+        ReqRes user = new ReqRes();
+        if (skill.getUser() == null) {
+            user = userService.getUserById(2L);
+        }else {
+            user = userService.getUserById(skill.getUser().getId());
+        }
+
         User user1 = (User) user.getData();
         ReqRes skill1 = getSkillById(id);
         Skill skill2 = (Skill) skill1.getData();
