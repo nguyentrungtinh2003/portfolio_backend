@@ -139,6 +139,7 @@ public class UserServiceImpl implements UserService{
     @Override
     public ReqRes updateUser(Long id,User user, MultipartFile img) throws IOException {
 
+        ReqRes reqRes = new ReqRes();
         ReqRes user1 = getUserById(id);
 
         User user2 = (User) user1.getData();
@@ -154,14 +155,25 @@ public class UserServiceImpl implements UserService{
         user2.setHobby(user.getHobby());
 
         if (img != null && !img.isEmpty()) {
-            Map uploadResult = cloudinary.uploader().upload(img.getBytes(), ObjectUtils.emptyMap());
-            String imgUrl = uploadResult.get("url").toString();
-            user2.setImg(imgUrl); // Lưu URL của ảnh
+            try {
+                if(user2.getImg() != null && !user2.getImg().isEmpty()) {
+                    String oldImgUrl = user2.getImg();
+                    String publicID = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1,oldImgUrl.lastIndexOf("."));
+                    cloudinary.uploader().destroy(publicID,ObjectUtils.emptyMap());
+                }
+                Map uploadResult = cloudinary.uploader().upload(img.getBytes(), ObjectUtils.emptyMap());
+                String imgUrl = uploadResult.get("url").toString();
+                user2.setImg(imgUrl);
+            }catch(Exception e) {
+                reqRes.setStatusCode(500L);
+                reqRes.setMessage("Fail update img !");
+                reqRes.setTimestamp(LocalDateTime.now());
+                return reqRes;
+            }
         }
 
         userRepository.save(user2);
 
-        ReqRes reqRes = new ReqRes();
         reqRes.setStatusCode(200L);
         reqRes.setMessage("Update user by id success !");
         reqRes.setData(user2);
