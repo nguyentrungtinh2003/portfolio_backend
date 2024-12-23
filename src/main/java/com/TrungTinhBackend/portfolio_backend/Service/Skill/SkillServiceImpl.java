@@ -35,7 +35,7 @@ public class SkillServiceImpl implements SkillService{
     @Override
     public ReqRes addSkill(Skill skill, MultipartFile img) throws IOException {
 
-        ReqRes user = userService.getUserById(skill.getUser().getId());
+        ReqRes user = userService.getUserById(2L);
 
         Skill skill1 = new Skill();
         skill1.setName(skill.getName());
@@ -102,9 +102,25 @@ public class SkillServiceImpl implements SkillService{
         skill2.setUser(user1);
 
         if (img != null && !img.isEmpty()) {
-            Map uploadResult = cloudinary.uploader().upload(img.getBytes(), ObjectUtils.emptyMap());
-            String imgUrl = uploadResult.get("url").toString();
-            skill2.setImg(imgUrl); // Lưu URL của ảnh
+            try {
+                // Xóa ảnh cũ trên Cloudinary nếu tồn tại
+                if (skill.getImg() != null && !skill.getImg().isEmpty()) {
+                    String oldImgUrl = skill2.getImg();
+                    String publicID = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1, oldImgUrl.lastIndexOf("."));
+                    cloudinary.uploader().destroy(publicID, ObjectUtils.emptyMap());
+                }
+
+                // Upload ảnh mới lên Cloudinary
+                Map uploadResult = cloudinary.uploader().upload(img.getBytes(), ObjectUtils.emptyMap());
+                String imgUrl = uploadResult.get("url").toString();
+                skill2.setImg(imgUrl);
+            } catch (Exception e) {
+                ReqRes reqRes = new ReqRes();
+                reqRes.setStatusCode(500L);
+                reqRes.setMessage("Failed to update image: " + e.getMessage());
+                reqRes.setTimestamp(LocalDateTime.now());
+                return reqRes;
+            }
         }
 
         skillRepository.save(skill2);

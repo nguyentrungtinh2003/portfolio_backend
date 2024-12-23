@@ -137,46 +137,81 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ReqRes updateUser(Long id,User user, MultipartFile img) throws IOException {
-
+    public ReqRes updateUser(Long id, User user, MultipartFile img) throws IOException {
         ReqRes reqRes = new ReqRes();
-        ReqRes user1 = getUserById(id);
 
-        User user2 = (User) user1.getData();
-        user2.setUsername(user.getUsername());
-        user2.setPassword(passwordEncoder.encode(user.getPassword()));
-        user2.setEmail(user.getEmail());
-        user2.setPhoneNumber(user.getPhoneNumber());
-        user2.setAddress(user.getAddress());
-        user2.setFullName(user.getFullName());
-        user2.setPosition(user.getPosition());
-        user2.setUniversity(user.getUniversity());
-        user2.setBirthDay(user.getBirthDay());
-        user2.setHobby(user.getHobby());
+        // Lấy thông tin người dùng hiện tại
+        ReqRes userResponse = getUserById(id);
+        if (userResponse.getData() == null) {
+            reqRes.setStatusCode(404L);
+            reqRes.setMessage("User not found!");
+            reqRes.setTimestamp(LocalDateTime.now());
+            return reqRes;
+        }
 
+        User existingUser = (User) userResponse.getData();
+
+        // Cập nhật thông tin người dùng nếu có
+        if (user.getUsername() != null && !user.getUsername().isEmpty()) {
+            existingUser.setUsername(user.getUsername());
+        }
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+            existingUser.setEmail(user.getEmail());
+        }
+        if (user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty()) {
+            existingUser.setPhoneNumber(user.getPhoneNumber());
+        }
+        if (user.getAddress() != null && !user.getAddress().isEmpty()) {
+            existingUser.setAddress(user.getAddress());
+        }
+        if (user.getFullName() != null && !user.getFullName().isEmpty()) {
+            existingUser.setFullName(user.getFullName());
+        }
+        if (user.getPosition() != null && !user.getPosition().isEmpty()) {
+            existingUser.setPosition(user.getPosition());
+        }
+        if (user.getUniversity() != null && !user.getUniversity().isEmpty()) {
+            existingUser.setUniversity(user.getUniversity());
+        }
+        if (user.getBirthDay() != null) {
+            existingUser.setBirthDay(user.getBirthDay());
+        }
+        if (user.getHobby() != null && !user.getHobby().isEmpty()) {
+            existingUser.setHobby(user.getHobby());
+        }
+
+        // Xử lý ảnh nếu có
         if (img != null && !img.isEmpty()) {
             try {
-                if(user2.getImg() != null && !user2.getImg().isEmpty()) {
-                    String oldImgUrl = user2.getImg();
-                    String publicID = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1,oldImgUrl.lastIndexOf("."));
-                    cloudinary.uploader().destroy(publicID,ObjectUtils.emptyMap());
+                // Xóa ảnh cũ trên Cloudinary nếu tồn tại
+                if (existingUser.getImg() != null && !existingUser.getImg().isEmpty()) {
+                    String oldImgUrl = existingUser.getImg();
+                    String publicID = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1, oldImgUrl.lastIndexOf("."));
+                    cloudinary.uploader().destroy(publicID, ObjectUtils.emptyMap());
                 }
+
+                // Upload ảnh mới lên Cloudinary
                 Map uploadResult = cloudinary.uploader().upload(img.getBytes(), ObjectUtils.emptyMap());
                 String imgUrl = uploadResult.get("url").toString();
-                user2.setImg(imgUrl);
-            }catch(Exception e) {
+                existingUser.setImg(imgUrl);
+            } catch (Exception e) {
                 reqRes.setStatusCode(500L);
-                reqRes.setMessage("Fail update img !");
+                reqRes.setMessage("Failed to update image: " + e.getMessage());
                 reqRes.setTimestamp(LocalDateTime.now());
                 return reqRes;
             }
         }
 
-        userRepository.save(user2);
+        // Lưu người dùng đã cập nhật
+        userRepository.save(existingUser);
 
+        // Trả về phản hồi thành công
         reqRes.setStatusCode(200L);
-        reqRes.setMessage("Update user by id success !");
-        reqRes.setData(user2);
+        reqRes.setMessage("User updated successfully!");
+        reqRes.setData(existingUser);
         reqRes.setTimestamp(LocalDateTime.now());
         return reqRes;
     }

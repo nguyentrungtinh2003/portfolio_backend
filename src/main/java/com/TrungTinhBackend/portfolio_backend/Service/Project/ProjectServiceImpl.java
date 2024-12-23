@@ -105,17 +105,34 @@ public class ProjectServiceImpl implements ProjectService{
         ReqRes project1 = getProjectById(id);
         Project project2 = (Project) project1.getData();
 
-        ReqRes user = userService.getUserById(project.getUser().getId());
+        ReqRes user = userService.getUserById(2L);
         User user1 = (User) user.getData();
 
         ReqRes skillList = skillService.getAllSkill();
         List<Skill> skills = (List<Skill>)skillList.getData();
 
         if (img != null && !img.isEmpty()) {
-            Map uploadResult = cloudinary.uploader().upload(img.getBytes(), ObjectUtils.emptyMap());
-            String imgUrl = uploadResult.get("url").toString();
-            project2.setImg(imgUrl); // Lưu URL của ảnh
+            try {
+                // Xóa ảnh cũ trên Cloudinary nếu tồn tại
+                if (project2.getImg() != null && !project2.getImg().isEmpty()) {
+                    String oldImgUrl = project2.getImg();
+                    String publicID = oldImgUrl.substring(oldImgUrl.lastIndexOf("/") + 1, oldImgUrl.lastIndexOf("."));
+                    cloudinary.uploader().destroy(publicID, ObjectUtils.emptyMap());
+                }
+
+                // Upload ảnh mới lên Cloudinary
+                Map uploadResult = cloudinary.uploader().upload(img.getBytes(), ObjectUtils.emptyMap());
+                String imgUrl = uploadResult.get("url").toString();
+                project2.setImg(imgUrl);
+            } catch (Exception e) {
+                ReqRes reqRes = new ReqRes();
+                reqRes.setStatusCode(500L);
+                reqRes.setMessage("Failed to update image: " + e.getMessage());
+                reqRes.setTimestamp(LocalDateTime.now());
+                return reqRes;
+            }
         }
+
         project2.setName(project.getName());
         project2.setDescription(project.getDescription());
         project2.setEndDate(project.getEndDate());

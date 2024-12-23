@@ -16,4 +16,12 @@ public class ReqRes {
     private Object data;
 
     private LocalDateTime timestamp;
+
+    public ReqRes(long l, String s, LocalDateTime now, Object o) {
+    }
+
+    public ReqRes() {
+
+    }
+
 }

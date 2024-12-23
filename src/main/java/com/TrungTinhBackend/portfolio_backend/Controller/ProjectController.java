@@ -24,8 +24,8 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReqRes> updateProject(@PathVariable Long id,@RequestPart Project project,
-                                             @RequestPart MultipartFile img) throws IOException {
+    public ResponseEntity<ReqRes> updateProject(@PathVariable Long id,@RequestPart(value = "project",required = false) Project project,
+                                             @RequestPart(value = "img",required = false) MultipartFile img) throws IOException {
         return ResponseEntity.ok(projectService.updateProject(id,project,img));
     }
 

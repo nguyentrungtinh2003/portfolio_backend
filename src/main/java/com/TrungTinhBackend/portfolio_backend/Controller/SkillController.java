@@ -24,8 +24,8 @@ public class SkillController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReqRes> updateSkill(@PathVariable Long id,@RequestPart Skill skill,
-                                           @RequestPart MultipartFile img) throws IOException {
+    public ResponseEntity<ReqRes> updateSkill(@PathVariable Long id,@RequestPart(value = "skill",required = false) Skill skill,
+                                           @RequestPart(value = "img",required = false) MultipartFile img) throws IOException {
         return ResponseEntity.ok(skillService.updateSkill(id,skill,img));
     }
 

@@ -3,13 +3,16 @@ package com.TrungTinhBackend.portfolio_backend.Controller;
 import com.TrungTinhBackend.portfolio_backend.Entity.User;
 import com.TrungTinhBackend.portfolio_backend.ReqRes.ReqRes;
 import com.TrungTinhBackend.portfolio_backend.Service.User.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.DataInput;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/user")
@@ -30,8 +33,12 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReqRes> updateUser(@PathVariable Long id,@RequestPart(required = false) User user,
-                                             @RequestPart(required = false) MultipartFile img) throws IOException {
+    public ResponseEntity<ReqRes> updateUser(@PathVariable Long id,@RequestPart(value = "user",required = false) User user,
+                                             @RequestPart(value = "img",required = false) MultipartFile img) throws IOException {
+        if (user == null) {
+            return ResponseEntity.badRequest()
+                    .body(new ReqRes(400L, "Invalid user data!", LocalDateTime.now(), null));
+        }
         return ResponseEntity.ok(userService.updateUser(id,user,img));
     }
 
